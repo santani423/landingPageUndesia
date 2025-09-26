@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getDemos } from "../services/mockService";
+import { getDemos,getTestimonials } from "../services/mockService";
 
 // Async thunk untuk fetch data
 export const fetchDemos = createAsyncThunk("demo/fetchDemos", async () => {
@@ -7,15 +7,16 @@ export const fetchDemos = createAsyncThunk("demo/fetchDemos", async () => {
   return data;
 });
 
-export const getTestimonials = createAsyncThunk("demo/getTestimonials", async () => {
+export const fetchTestimonials = createAsyncThunk("demo/getTestimonials", async () => {
   const data = await getTestimonials();
   return data;
 });
 
-const demoSlice = createSlice({
-  name: "demo",
+const mockSlice = createSlice({
+  name: "mock",
   initialState: {
     data: null,
+    testimonials: null,
     loading: false,
     error: null,
   },
@@ -33,8 +34,21 @@ const demoSlice = createSlice({
       .addCase(fetchDemos.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
-      });
+      })
+      // getTestimonials
+      .addCase(fetchTestimonials.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTestimonials.fulfilled, (state, action) => {
+        state.loading = false;
+        state.testimonials = action.payload;
+      })
+      .addCase(fetchTestimonials.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      }); 
   },
 });
 
-export default demoSlice.reducer;
+export default mockSlice.reducer;

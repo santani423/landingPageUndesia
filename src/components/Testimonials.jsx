@@ -1,22 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from './ui/card';
-import { Badge } from './ui/badge';
-import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
-import { mockData } from './mock';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react";
+import { mockData } from "./mock";
 
-
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTestimonials } from "../store/mockSlice";
 
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const dispatch = useDispatch();
 
+  const { testimonials, loading, error } = useSelector((state) => state.mock);
+  console.log("Testimonials data from Redux:", testimonials?.data, loading, error);
+  
+  React.useEffect(() => {
+    dispatch(fetchTestimonials());
+  }, [dispatch]);
   // Auto-play functionality
   useEffect(() => {
     if (!isAutoPlaying) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => 
-        prevIndex === mockData.testimonials.length - 1 ? 0 : prevIndex + 1
+      setCurrentIndex((prevIndex) =>
+        prevIndex === testimonials?.data?.length - 1 ? 0 : prevIndex + 1
       );
     }, 4000);
 
@@ -31,17 +39,22 @@ const Testimonials = () => {
   };
 
   const goToPrevious = () => {
-    const newIndex = currentIndex === 0 ? mockData.testimonials.length - 1 : currentIndex - 1;
+    const newIndex =
+      currentIndex === 0 ? testimonials?.data?.length - 1 : currentIndex - 1;
     goToSlide(newIndex);
   };
 
   const goToNext = () => {
-    const newIndex = currentIndex === mockData.testimonials.length - 1 ? 0 : currentIndex + 1;
+    const newIndex =
+      currentIndex === testimonials?.data?.length - 1 ? 0 : currentIndex + 1;
     goToSlide(newIndex);
   };
 
   return (
-    <section id="testimonials" className="py-20 bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50">
+    <section
+      id="testimonials"
+      className="py-20 bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50"
+    >
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -58,11 +71,11 @@ const Testimonials = () => {
         <div className="relative max-w-4xl mx-auto">
           {/* Main Testimonial Card */}
           <div className="relative overflow-hidden">
-            <div 
+            <div
               className="flex transition-transform duration-500 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-              {mockData.testimonials.map((testimonial, index) => (
+              {testimonials?.data?.map((testimonial, index) => (
                 <div key={index} className="w-full flex-shrink-0">
                   <Card className="mx-4 border-0 shadow-2xl bg-white hover:shadow-3xl transition-shadow duration-300">
                     <CardContent className="p-8 md:p-12 text-center">
@@ -81,7 +94,10 @@ const Testimonials = () => {
                         {/* Avatar */}
                         <div className="w-16 h-16 bg-gradient-to-r from-rose-400 to-rose-500 rounded-full flex items-center justify-center shadow-lg">
                           <span className="text-white font-bold text-lg">
-                            {testimonial.name.split(' ')[0][0]}{testimonial.name.split(' ')[1] ? testimonial.name.split(' ')[1][0] : ''}
+                            {testimonial.name.split(" ")[0][0]}
+                            {testimonial.name.split(" ")[1]
+                              ? testimonial.name.split(" ")[1][0]
+                              : ""}
                           </span>
                         </div>
 
@@ -98,7 +114,10 @@ const Testimonials = () => {
                       {/* Star Rating */}
                       <div className="flex justify-center space-x-1 mt-6">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-5 h-5 fill-rose-400 text-rose-400" />
+                          <Star
+                            key={i}
+                            className="w-5 h-5 fill-rose-400 text-rose-400"
+                          />
                         ))}
                       </div>
                     </CardContent>
@@ -125,14 +144,14 @@ const Testimonials = () => {
 
           {/* Dots Indicator */}
           <div className="flex justify-center space-x-2 mt-8">
-            {mockData.testimonials.map((_, index) => (
+            {testimonials?.data?.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-200 ${
                   index === currentIndex
-                    ? 'bg-gradient-to-r from-rose-400 to-rose-500 w-8'
-                    : 'bg-gray-300 hover:bg-gray-400'
+                    ? "bg-gradient-to-r from-rose-400 to-rose-500 w-8"
+                    : "bg-gray-300 hover:bg-gray-400"
                 }`}
               />
             ))}
@@ -142,19 +161,27 @@ const Testimonials = () => {
         {/* Stats Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 max-w-4xl mx-auto">
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-rose-600 mb-2">500+</div>
+            <div className="text-3xl md:text-4xl font-bold text-rose-600 mb-2">
+              500+
+            </div>
             <div className="text-gray-600">Undangan Dibuat</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-rose-600 mb-2">98%</div>
+            <div className="text-3xl md:text-4xl font-bold text-rose-600 mb-2">
+              98%
+            </div>
             <div className="text-gray-600">Kepuasan Pelanggan</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-rose-600 mb-2">50+</div>
+            <div className="text-3xl md:text-4xl font-bold text-rose-600 mb-2">
+              50+
+            </div>
             <div className="text-gray-600">Template Tersedia</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-rose-600 mb-2">24/7</div>
+            <div className="text-3xl md:text-4xl font-bold text-rose-600 mb-2">
+              24/7
+            </div>
             <div className="text-gray-600">Dukungan Online</div>
           </div>
         </div>

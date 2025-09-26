@@ -13,7 +13,7 @@ const Demo = () => {
   const [activeTab, setActiveTab] = useState('website');
 
   const dispatch = useDispatch();
-  const { data, loading, error } = useSelector((state) => state.demo);
+  const { data, loading, error } = useSelector((state) => state.mock);
   console.log("Demo data from Redux:", data, loading, error);
   
   React.useEffect(() => {

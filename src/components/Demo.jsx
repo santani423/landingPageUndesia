@@ -6,8 +6,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Play, Eye, ExternalLink } from 'lucide-react';
 import { mockData } from './mock';
 
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDemos } from "./../store/demoSlice";
+
 const Demo = () => {
   const [activeTab, setActiveTab] = useState('website');
+
+  const dispatch = useDispatch();
+  const { data, loading, error } = useSelector((state) => state.demo);
+  console.log("Demo data from Redux:", data, loading, error);
+  
+  React.useEffect(() => {
+    dispatch(fetchDemos());
+  }, [dispatch]);
 
   const handleDemoClick = (type, title) => {
     console.log(`Demo clicked: ${type} - ${title}`);
@@ -57,7 +68,7 @@ const Demo = () => {
           {/* Website Demos */}
           <TabsContent value="website" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {mockData.demos.website.map((demo, index) => (
+              {data?.demos?.website?.map((demo, index) => (
                 <Card 
                   key={index}
                   className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white"

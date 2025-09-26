@@ -7,7 +7,7 @@ import { Play, Eye, ExternalLink } from 'lucide-react';
 import { mockData } from './mock';
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDemos } from "./../store/demoSlice";
+import { fetchDemos } from "../store/mockSlice";
 
 const Demo = () => {
   const [activeTab, setActiveTab] = useState('website');

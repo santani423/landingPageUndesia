@@ -10,3 +10,11 @@ export const getDemos = async () => {
     throw error.response || error;
   }
 };
+export const getTestimonials = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/testimonials`);
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};

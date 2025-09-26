@@ -4,6 +4,8 @@ import { Badge } from './ui/badge';
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { mockData } from './mock';
 
+
+
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);

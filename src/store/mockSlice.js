@@ -1,9 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getDemos } from "../services/demoService";
+import { getDemos } from "../services/mockService";
 
 // Async thunk untuk fetch data
 export const fetchDemos = createAsyncThunk("demo/fetchDemos", async () => {
   const data = await getDemos();
+  return data;
+});
+
+export const getTestimonials = createAsyncThunk("demo/getTestimonials", async () => {
+  const data = await getTestimonials();
   return data;
 });
 

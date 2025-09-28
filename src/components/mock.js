@@ -5,7 +5,7 @@ export const mockData = {
     { label: 'Home', href: '#home' },
     { label: 'Paket', href: '#packages' },
     { label: 'Demo', href: '#demo' },
-    { label: 'Semua Undangan', href: '/gallery' },
+    { label: 'Semua Undangan', href: '/themes' },
     { label: 'Testimonial', href: '#testimonials' },
     { label: 'Kontak', href: '#contact' }
   ],

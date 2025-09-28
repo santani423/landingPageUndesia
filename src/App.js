@@ -10,6 +10,7 @@ import Testimonials from "./components/Testimonials";
 import CTA from "./components/CTA";
 import Footer from "./components/Footer";
 import Gallery from "./components/Gallery";
+import Themes from "./components/Themes";
 
 // Landing Page Component
 const LandingPage = () => {
@@ -33,7 +34,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/themes" element={<Gallery />} />
+          {/* <Route path="/themes" element={<Themes />} /> */}
         </Routes>
       </BrowserRouter>
     </div>

@@ -20,12 +20,19 @@ const Header = () => {
   }, []);
 
   const scrollToSection = (href) => {
+    console.log(href);
+
     if (href.startsWith("#")) {
+      // Scroll ke elemen di halaman yang sama
       const element = document.querySelector(href);
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
       }
+    } else {
+      // Kalau href bukan anchor, pindah halaman
+      window.location.href = href;
     }
+
     setIsMobileMenuOpen(false);
   };
 

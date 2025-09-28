@@ -1,51 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Play, Eye, ExternalLink } from "lucide-react";
-import { mockData } from "./mock";
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDemos, fetchThemes } from "../store/mockSlice";
+import { fetchDemos, fetchThemes, fetchThemeVideos } from "../store/mockSlice";
 
 const Demo = () => {
   const [activeTab, setActiveTab] = useState("website");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState(null);
 
   const dispatch = useDispatch();
-  const { data, themes, loading, error, baseUrl } = useSelector(
-    (state) => state.mock
-  );
-  console.log("Demo data from Redux:", data, loading, error);
+  const { themes, themeVideos, baseUrl } = useSelector((state) => state.mock);
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(fetchDemos());
-    dispatch(
-      fetchThemes({
-        page: 1,
-        perPage: 4,
-      })
-    );
+    dispatch(fetchThemes({ page: 1, perPage: 4 }));
+    dispatch(fetchThemeVideos({ page: 1, perPage: 4 }));
   }, [dispatch]);
 
-  const handleDemoClick = (type, title) => {
-    // console.log(`Demo clicked: ${type} - ${title}`);
+  const handleDemoClick = (type, theme) => {
+    console.log("Demo clicked:", type, theme?.url_video);
+
     if (type === "video") {
-      alert(`Akan memutar video demo: ${title}`);
+      setVideoUrl(theme?.url_video);
+      setSelectedTheme(theme);
+      setIsVideoOpen(true);
     } else {
-      handleViewClick(title);
+      handleViewClick(theme?.nama_theme);
     }
   };
 
   const handleOrderClick = (theme) => {
     window.open(`${baseUrl}order/${theme?.kode_theme}`, "_blank");
   };
-  const handleViewClick = (theme) => {
-    window.open(`${baseUrl}demo/${theme}`, "_blank");
+
+  const handleViewClick = (themeName) => {
+    window.open(`${baseUrl}demo/${themeName}`, "_blank");
   };
 
   const handleViewAllClick = () => {
-    console.log("View all samples clicked");
     alert(
       "Akan mengarahkan ke halaman Gallery dengan semua contoh undangan..."
     );
@@ -65,7 +64,7 @@ const Demo = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-rose-500 mx-auto rounded-full"></div>
         </div>
 
-        {/* Tabs for Website vs Video */}
+        {/* Tabs */}
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
@@ -95,7 +94,7 @@ const Demo = () => {
                   className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white"
                 >
                   <div className="relative overflow-hidden">
-                    {/* Demo Thumbnail */}
+                    {/* Thumbnail */}
                     <div className="aspect-[4/5] relative group-hover:scale-105 transition-transform duration-500">
                       <img
                         src={`https://undesia.com/assets/themes/${demo?.nama_theme}/preview.png`}
@@ -108,17 +107,15 @@ const Demo = () => {
                       />
                     </div>
 
-                    {/* Category Badge */}
+                    {/* Category */}
                     <Badge className="absolute top-3 right-3 bg-gradient-to-r from-rose-500 to-rose-400 text-white shadow-lg">
                       {demo?.category_id}
                     </Badge>
 
-                    {/* Hover Overlay */}
+                    {/* Hover overlay */}
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <Button
-                        onClick={() =>
-                          handleDemoClick("website", demo?.nama_theme)
-                        }
+                        onClick={() => handleDemoClick("website", demo)}
                         className="bg-white/20 backdrop-blur-sm text-white border-2 border-white hover:bg-white hover:text-gray-800 px-6 py-3 rounded-full transition-all duration-300"
                       >
                         <Eye className="w-5 h-5 mr-2" />
@@ -135,19 +132,15 @@ const Demo = () => {
                       {demo?.kode_theme}
                     </p>
 
-                    {/* Tombol Lihat Demo */}
                     <Button
-                      onClick={() =>
-                        handleDemoClick("website", demo?.nama_theme)
-                      }
+                      onClick={() => handleDemoClick("website", demo)}
                       className="w-full mb-3 bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white rounded-full"
                     >
                       Lihat Demo Website
                     </Button>
 
-                    {/* Tombol Pesan */}
                     <Button
-                      onClick={() => handleOrderClick(demo)} // bikin fungsi handleOrderClick
+                      onClick={() => handleOrderClick(demo)}
                       className="w-full bg-gradient-to-r from-green-500 to-emerald-400 hover:from-green-600 hover:to-emerald-500 text-white rounded-full"
                     >
                       Pesan Sekarang
@@ -161,15 +154,22 @@ const Demo = () => {
           {/* Video Demos */}
           <TabsContent value="video" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {mockData?.demos?.video.map((demo, index) => (
+              {themeVideos?.data?.map((demo, index) => (
                 <Card
                   key={index}
                   className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white"
                 >
                   <div className="relative overflow-hidden">
-                    {/* Video Thumbnail */}
-                    <div className="aspect-video bg-gradient-to-br from-rose-200 via-pink-200 to-orange-200 relative group-hover:scale-105 transition-transform duration-500">
-                      <div className="absolute inset-4 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg shadow-inner flex items-center justify-center">
+                    <div className="aspect-video relative group-hover:scale-105 transition-transform duration-500">
+                      {/* Gambar preview video */}
+                      <img
+                        src={`${baseUrl}assets/themes_video/${demo?.nama_tema}.png`} // ambil dari field preview/url di DB
+                        alt={demo?.nama_tema || "Video Preview"}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+
+                      {/* Overlay gelap + tombol play */}
+                      <div className="absolute inset-0 bg-black/40 rounded-lg shadow-inner flex items-center justify-center">
                         <div className="text-center text-white">
                           <div className="w-16 h-16 bg-gradient-to-r from-rose-400 to-rose-500 rounded-full mx-auto mb-4 flex items-center justify-center">
                             <Play className="w-8 h-8 text-white fill-white" />
@@ -179,15 +179,13 @@ const Demo = () => {
                       </div>
                     </div>
 
-                    {/* Category Badge */}
                     <Badge className="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-red-400 text-white shadow-lg">
-                      {demo?.category}
+                      {demo?.category_id}
                     </Badge>
 
-                    {/* Play Button Overlay */}
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <Button
-                        onClick={() => handleDemoClick("video", demo?.title)}
+                        onClick={() => handleDemoClick("video", demo)}
                         className="bg-white/20 backdrop-blur-sm text-white border-2 border-white hover:bg-white hover:text-gray-800 px-6 py-3 rounded-full transition-all duration-300"
                       >
                         <Play className="w-5 h-5 mr-2 fill-current" />
@@ -198,13 +196,15 @@ const Demo = () => {
 
                   <CardContent className="p-6">
                     <h3 className="font-serif font-bold text-xl text-gray-800 mb-2">
-                      {demo?.title}
+                      {demo?.nama_tema}
                     </h3>
                     <p className="text-orange-600 font-medium text-sm mb-4">
-                      {demo?.description}
+                      {demo?.harga
+                        ? `Rp ${demo.harga.toLocaleString()}`
+                        : "Tanpa harga"}
                     </p>
                     <Button
-                      onClick={() => handleDemoClick("video", demo?.title)}
+                      onClick={() => handleDemoClick("video", demo)}
                       className="w-full bg-gradient-to-r from-orange-500 to-red-400 hover:from-orange-600 hover:to-red-500 text-white rounded-full"
                     >
                       Play Video Demo
@@ -216,7 +216,7 @@ const Demo = () => {
           </TabsContent>
         </Tabs>
 
-        {/* View All CTA */}
+        {/* View All */}
         <div className="text-center mt-16">
           <p className="text-lg text-gray-600 mb-6">
             Masih banyak template dan video undangan menarik lainnya!
@@ -230,6 +230,30 @@ const Demo = () => {
           </Button>
         </div>
       </div>
+
+      {/* Modal Video */}
+      {/* Modal Video */}
+      <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
+        <DialogContent className="max-w-3xl p-0 bg-black">
+          <DialogHeader>
+            <DialogTitle className="text-white p-4">
+              Demo Video: {selectedTheme?.nama_tema}
+            </DialogTitle>
+          </DialogHeader>
+
+          {/* Render iframe langsung dari database */}
+          <div className="relative w-full h-[500px] flex items-center justify-center">
+            {selectedTheme?.url_video ? (
+              <div
+                className="rounded-lg overflow-hidden"
+                dangerouslySetInnerHTML={{ __html: selectedTheme.url_video }}
+              />
+            ) : (
+              <p className="text-white">Video tidak tersedia</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

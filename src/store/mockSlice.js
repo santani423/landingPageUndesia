@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getDemos, getTestimonials, getThemes } from "../services/mockService";
+import {
+  getDemos,
+  getTestimonials,
+  getThemes,
+  getThemeVideos,
+} from "../services/mockService";
 
 // Async thunk untuk fetch data
 export const fetchDemos = createAsyncThunk("demo/fetchDemos", async () => {
@@ -20,6 +25,11 @@ export const fetchThemes = createAsyncThunk("demo/getThemes", async () => {
   return data;
 });
 
+export const fetchThemeVideos = createAsyncThunk("demo/getThemeVideos", async () => {
+  const data = await getThemeVideos();
+  return data;
+});
+
 const mockSlice = createSlice({
   name: "mock",
   initialState: {
@@ -27,6 +37,7 @@ const mockSlice = createSlice({
     baseUrl: "https://undesia.com/",
     testimonials: null,
     themes: null,
+    themeVideos: [],
     loading: false,
     error: null,
   },
@@ -68,6 +79,19 @@ const mockSlice = createSlice({
         state.themes = action.payload;
       })
       .addCase(fetchThemes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      // getThemeVideos
+      .addCase(fetchThemeVideos.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchThemeVideos.fulfilled, (state, action) => {
+        state.loading = false;
+        state.themeVideos = action.payload;
+      })
+      .addCase(fetchThemeVideos.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

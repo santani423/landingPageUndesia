@@ -20,13 +20,11 @@ export const getTestimonials = async () => {
   }
 };
 
-
 export const getThemes = async (page = 1, perPage = 10) => {
   try {
     const response = await axios.get(`${API_URL}/themes`, {
       params: {
-        page,
-        per_page: perPage,
+        per_page: page?.perPage,
       },
     });
     return response.data;
@@ -35,13 +33,11 @@ export const getThemes = async (page = 1, perPage = 10) => {
   }
 };
 
-
 export const getThemeVideos = async (page = 1, perPage = 10) => {
   try {
     const response = await axios.get(`${API_URL}/themeVideos`, {
       params: {
-        page,
-        per_page: perPage,
+        per_page: page?.perPage,
       },
     });
     return response.data;

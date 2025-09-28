@@ -21,15 +21,15 @@ export const fetchTestimonials = createAsyncThunk(
   }
 );
 
-export const fetchThemes = createAsyncThunk("demo/getThemes", async () => {
-  const data = await getThemes();
+export const fetchThemes = createAsyncThunk("demo/getThemes", async (page = 1, perPage = 10) => {
+  const data = await getThemes(page, perPage);
   return data;
 });
 
 export const fetchThemeVideos = createAsyncThunk(
   "demo/getThemeVideos",
-  async () => {
-    const data = await getThemeVideos();
+  async (page = 1, perPage = 10) => {
+    const data = await getThemeVideos(page, perPage);
     return data;
   }
 );

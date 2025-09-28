@@ -25,8 +25,8 @@ const Gallery = () => {
 
   useEffect(() => {
     dispatch(fetchThemeCategories());
-    dispatch(fetchThemes({ page: 1, perPage: 8 }));
-    dispatch(fetchThemeVideos({ page: 1, perPage: 8 }));
+    dispatch(fetchThemes({ page: 1, perPage: 1000 }));
+    dispatch(fetchThemeVideos({ page: 1, perPage: 1000 }));
   }, [dispatch]);
 
   const handleDemoClick = (type, item) => {
@@ -34,14 +34,18 @@ const Gallery = () => {
       setSelectedTheme(item);
       setIsVideoOpen(true);
     } else {
-      alert(`Akan membuka preview website: ${item.nama_theme}`);
+      handleViewClick(item?.nama_theme);
     }
+  };
+
+  const handleViewClick = (themeName) => {
+    window.open(`${baseUrl}demo/${themeName}`, "_blank");
   };
 
   const handleBackToHome = () => window.history.back();
 
-  const handleOrderClick = (type) =>
-    alert(`Akan mengarahkan ke form pemesanan ${type}...`);
+  const handleOrderClick = (theme) =>
+    window.open(`${baseUrl}order/${theme?.kode_theme}`, "_blank");
 
   const filterItems = (items) => {
     if (selectedCategory === "all") return items;
@@ -162,7 +166,7 @@ const Gallery = () => {
                     </div>
 
                     <Badge className="absolute top-3 right-3 bg-gradient-to-r from-rose-500 to-rose-400 text-white shadow-lg">
-                      {demo.category_id}
+                      {demo?.category?.name || "Kategori Tidak Diketahui"}
                     </Badge>
 
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -191,7 +195,7 @@ const Gallery = () => {
                     </Button>
 
                     <Button
-                      onClick={() => handleOrderClick("website")}
+                      onClick={() => handleOrderClick(demo)}
                       className="w-full bg-gradient-to-r from-green-500 to-emerald-400 hover:from-green-600 hover:to-emerald-500 text-white rounded-full"
                     >
                       Pesan Sekarang
@@ -229,7 +233,7 @@ const Gallery = () => {
                     </div>
 
                     <Badge className="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-red-400 text-white shadow-lg">
-                      {demo.category_id}
+                      {demo?.category?.name || "Kategori Tidak Diketahui"}
                     </Badge>
 
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">

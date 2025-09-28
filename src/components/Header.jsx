@@ -1,37 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Menu, X } from 'lucide-react';
-import { mockData } from './mock';
-
+import React, { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import { Menu, X } from "lucide-react";
+import { mockData } from "./mock";
+import { useDispatch, useSelector } from "react-redux";
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const { data, themes, loading, error, baseUrl } = useSelector(
+    (state) => state.mock
+  );
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToSection = (href) => {
-    if (href.startsWith('#')) {
+    if (href.startsWith("#")) {
       const element = document.querySelector(href);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior: "smooth" });
       }
     }
     setIsMobileMenuOpen(false);
   };
 
+  // Tambahkan di dalam component Header
+  const handleLogin = () => {
+    window.location.href = `${baseUrl}login`;
+  };
+
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-white/95 backdrop-blur-md shadow-lg' 
-        : 'bg-transparent'
-    }`}>
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? "bg-white/95 backdrop-blur-md shadow-lg" : "bg-transparent"
+      }`}
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -62,8 +70,11 @@ const Header = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:block">
-            <Button className="bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white px-6 py-2 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200">
-              Pesan Sekarang
+            <Button
+              onClick={handleLogin}
+              className="bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white px-6 py-2 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              Login
             </Button>
           </div>
 
@@ -94,8 +105,11 @@ const Header = () => {
                 </button>
               ))}
               <div className="px-4 py-3">
-                <Button className="w-full bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white py-2 rounded-full font-medium">
-                  Pesan Sekarang
+                <Button
+                  onClick={handleLogin}
+                  className="w-full bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white py-2 rounded-full font-medium"
+                >
+                  Login
                 </Button>
               </div>
             </nav>

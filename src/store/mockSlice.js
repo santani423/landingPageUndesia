@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getDemos,getTestimonials } from "../services/mockService";
+import { getDemos, getTestimonials, getThemes } from "../services/mockService";
 
 // Async thunk untuk fetch data
 export const fetchDemos = createAsyncThunk("demo/fetchDemos", async () => {
@@ -7,8 +7,16 @@ export const fetchDemos = createAsyncThunk("demo/fetchDemos", async () => {
   return data;
 });
 
-export const fetchTestimonials = createAsyncThunk("demo/getTestimonials", async () => {
-  const data = await getTestimonials();
+export const fetchTestimonials = createAsyncThunk(
+  "demo/getTestimonials",
+  async () => {
+    const data = await getTestimonials();
+    return data;
+  }
+);
+
+export const fetchThemes = createAsyncThunk("demo/getThemes", async () => {
+  const data = await getThemes();
   return data;
 });
 
@@ -16,7 +24,9 @@ const mockSlice = createSlice({
   name: "mock",
   initialState: {
     data: null,
+    baseUrl: "https://undesia.com/",
     testimonials: null,
+    themes: null,
     loading: false,
     error: null,
   },
@@ -47,7 +57,20 @@ const mockSlice = createSlice({
       .addCase(fetchTestimonials.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
-      }); 
+      })
+      // getThemes
+      .addCase(fetchThemes.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchThemes.fulfilled, (state, action) => {
+        state.loading = false;
+        state.themes = action.payload;
+      })
+      .addCase(fetchThemes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
   },
 });
 

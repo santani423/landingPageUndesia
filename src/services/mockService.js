@@ -18,3 +18,18 @@ export const getTestimonials = async () => {
     throw error.response || error;
   }
 };
+
+
+export const getThemes = async (page = 1, perPage = 10) => {
+  try {
+    const response = await axios.get(`${API_URL}/themes`, {
+      params: {
+        page,
+        per_page: perPage,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};

@@ -1,37 +1,54 @@
-import React, { useState } from 'react';
-import { Button } from './ui/button';
-import { Card, CardContent } from './ui/card';
-import { Badge } from './ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Play, Eye, ExternalLink } from 'lucide-react';
-import { mockData } from './mock';
+import React, { useState } from "react";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Play, Eye, ExternalLink } from "lucide-react";
+import { mockData } from "./mock";
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDemos } from "../store/mockSlice";
+import { fetchDemos, fetchThemes } from "../store/mockSlice";
 
 const Demo = () => {
-  const [activeTab, setActiveTab] = useState('website');
+  const [activeTab, setActiveTab] = useState("website");
 
   const dispatch = useDispatch();
-  const { data, loading, error } = useSelector((state) => state.mock);
+  const { data, themes, loading, error, baseUrl } = useSelector(
+    (state) => state.mock
+  );
   console.log("Demo data from Redux:", data, loading, error);
-  
+
   React.useEffect(() => {
     dispatch(fetchDemos());
+    dispatch(
+      fetchThemes({
+        page: 1,
+        perPage: 4,
+      })
+    );
   }, [dispatch]);
 
   const handleDemoClick = (type, title) => {
-    console.log(`Demo clicked: ${type} - ${title}`);
-    if (type === 'video') {
+    // console.log(`Demo clicked: ${type} - ${title}`);
+    if (type === "video") {
       alert(`Akan memutar video demo: ${title}`);
     } else {
-      alert(`Akan membuka preview website: ${title}`);
+      handleViewClick(title);
     }
   };
 
+  const handleOrderClick = (theme) => {
+    window.open(`${baseUrl}order/${theme?.kode_theme}`, "_blank");
+  };
+  const handleViewClick = (theme) => {
+    window.open(`${baseUrl}demo/${theme}`, "_blank");
+  };
+
   const handleViewAllClick = () => {
-    console.log('View all samples clicked');
-    alert('Akan mengarahkan ke halaman Gallery dengan semua contoh undangan...');
+    console.log("View all samples clicked");
+    alert(
+      "Akan mengarahkan ke halaman Gallery dengan semua contoh undangan..."
+    );
   };
 
   return (
@@ -49,16 +66,20 @@ const Demo = () => {
         </div>
 
         {/* Tabs for Website vs Video */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-6xl mx-auto">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="max-w-6xl mx-auto"
+        >
           <TabsList className="grid w-full grid-cols-2 mb-12 bg-rose-50 rounded-full p-1 h-14">
-            <TabsTrigger 
-              value="website" 
+            <TabsTrigger
+              value="website"
               className="rounded-full text-lg font-medium data-[state=active]:bg-white data-[state=active]:text-rose-600 data-[state=active]:shadow-lg transition-all duration-300"
             >
               🖥️ Undangan Website
             </TabsTrigger>
-            <TabsTrigger 
-              value="video" 
+            <TabsTrigger
+              value="video"
               className="rounded-full text-lg font-medium data-[state=active]:bg-white data-[state=active]:text-rose-600 data-[state=active]:shadow-lg transition-all duration-300"
             >
               🎥 Undangan Video
@@ -68,37 +89,36 @@ const Demo = () => {
           {/* Website Demos */}
           <TabsContent value="website" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {data?.demos?.website?.map((demo, index) => (
-                <Card 
+              {themes?.data?.map((demo, index) => (
+                <Card
                   key={index}
                   className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white"
                 >
                   <div className="relative overflow-hidden">
                     {/* Demo Thumbnail */}
-                    <div className="aspect-[4/5] bg-gradient-to-br from-rose-100 via-pink-100 to-orange-100 relative group-hover:scale-105 transition-transform duration-500">
-                      <div className="absolute inset-4 bg-white rounded-lg shadow-inner flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="w-16 h-16 bg-gradient-to-r from-rose-400 to-rose-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                            <div className="w-8 h-8 border-2 border-white rounded-full"></div>
-                          </div>
-                          <div className="space-y-2">
-                            <div className="h-2 bg-gray-200 rounded w-20 mx-auto"></div>
-                            <div className="h-2 bg-gray-200 rounded w-16 mx-auto"></div>
-                            <div className="h-2 bg-gray-200 rounded w-24 mx-auto"></div>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="aspect-[4/5] relative group-hover:scale-105 transition-transform duration-500">
+                      <img
+                        src={`https://undesia.com/assets/themes/${demo?.nama_theme}/preview.png`}
+                        alt={demo?.nama_theme}
+                        className="w-full h-full object-cover rounded-lg"
+                        onError={(e) => {
+                          e.target.src =
+                            "https://via.placeholder.com/400x500.png?text=No+Preview";
+                        }}
+                      />
                     </div>
 
                     {/* Category Badge */}
                     <Badge className="absolute top-3 right-3 bg-gradient-to-r from-rose-500 to-rose-400 text-white shadow-lg">
-                      {demo.category}
+                      {demo?.category_id}
                     </Badge>
 
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <Button
-                        onClick={() => handleDemoClick('website', demo.title)}
+                        onClick={() =>
+                          handleDemoClick("website", demo?.nama_theme)
+                        }
                         className="bg-white/20 backdrop-blur-sm text-white border-2 border-white hover:bg-white hover:text-gray-800 px-6 py-3 rounded-full transition-all duration-300"
                       >
                         <Eye className="w-5 h-5 mr-2" />
@@ -109,16 +129,28 @@ const Demo = () => {
 
                   <CardContent className="p-6">
                     <h3 className="font-serif font-bold text-xl text-gray-800 mb-2">
-                      {demo.title}
+                      {demo?.nama_theme}
                     </h3>
                     <p className="text-rose-600 font-medium text-sm mb-4">
-                      {demo.description}
+                      {demo?.kode_theme}
                     </p>
+
+                    {/* Tombol Lihat Demo */}
                     <Button
-                      onClick={() => handleDemoClick('website', demo.title)}
-                      className="w-full bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white rounded-full"
+                      onClick={() =>
+                        handleDemoClick("website", demo?.nama_theme)
+                      }
+                      className="w-full mb-3 bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white rounded-full"
                     >
                       Lihat Demo Website
+                    </Button>
+
+                    {/* Tombol Pesan */}
+                    <Button
+                      onClick={() => handleOrderClick(demo)} // bikin fungsi handleOrderClick
+                      className="w-full bg-gradient-to-r from-green-500 to-emerald-400 hover:from-green-600 hover:to-emerald-500 text-white rounded-full"
+                    >
+                      Pesan Sekarang
                     </Button>
                   </CardContent>
                 </Card>
@@ -130,7 +162,7 @@ const Demo = () => {
           <TabsContent value="video" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {mockData?.demos?.video.map((demo, index) => (
-                <Card 
+                <Card
                   key={index}
                   className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white"
                 >
@@ -149,13 +181,13 @@ const Demo = () => {
 
                     {/* Category Badge */}
                     <Badge className="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-red-400 text-white shadow-lg">
-                      {demo.category}
+                      {demo?.category}
                     </Badge>
 
                     {/* Play Button Overlay */}
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <Button
-                        onClick={() => handleDemoClick('video', demo.title)}
+                        onClick={() => handleDemoClick("video", demo?.title)}
                         className="bg-white/20 backdrop-blur-sm text-white border-2 border-white hover:bg-white hover:text-gray-800 px-6 py-3 rounded-full transition-all duration-300"
                       >
                         <Play className="w-5 h-5 mr-2 fill-current" />
@@ -166,13 +198,13 @@ const Demo = () => {
 
                   <CardContent className="p-6">
                     <h3 className="font-serif font-bold text-xl text-gray-800 mb-2">
-                      {demo.title}
+                      {demo?.title}
                     </h3>
                     <p className="text-orange-600 font-medium text-sm mb-4">
-                      {demo.description}
+                      {demo?.description}
                     </p>
                     <Button
-                      onClick={() => handleDemoClick('video', demo.title)}
+                      onClick={() => handleDemoClick("video", demo?.title)}
                       className="w-full bg-gradient-to-r from-orange-500 to-red-400 hover:from-orange-600 hover:to-red-500 text-white rounded-full"
                     >
                       Play Video Demo

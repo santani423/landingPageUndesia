@@ -129,7 +129,7 @@ const Demo = () => {
           {/* Video Demos */}
           <TabsContent value="video" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {mockData.demos.video.map((demo, index) => (
+              {mockData?.demos?.video.map((demo, index) => (
                 <Card 
                   key={index}
                   className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white"

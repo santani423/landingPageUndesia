@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react";
-import { mockData } from "./mock";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTestimonials } from "../store/mockSlice";
@@ -10,17 +9,21 @@ import { fetchTestimonials } from "../store/mockSlice";
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const dispatch = useDispatch();
 
-  const { testimonials, loading, error } = useSelector((state) => state.mock);
-  console.log("Testimonials data from Redux:", testimonials?.data, loading, error);
+  const dispatch = useDispatch();
+  const { testimonials, loading, error, pagination } = useSelector(
+    (state) => state.mock
+  );
   
-  React.useEffect(() => {
-    dispatch(fetchTestimonials());
-  }, [dispatch]);
-  // Auto-play functionality
+  // Fetch data pertama kali
   useEffect(() => {
-    if (!isAutoPlaying) return;
+ 
+    dispatch(fetchTestimonials({ page: 1, perPage: 5 }));
+  }, []);
+
+  // Auto-play slide
+  useEffect(() => {
+    if (!isAutoPlaying || !testimonials?.data?.length) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) =>
@@ -29,12 +32,11 @@ const Testimonials = () => {
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, testimonials?.data?.length]);
 
   const goToSlide = (index) => {
     setCurrentIndex(index);
     setIsAutoPlaying(false);
-    // Resume auto-play after 10 seconds
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
@@ -48,6 +50,11 @@ const Testimonials = () => {
     const newIndex =
       currentIndex === testimonials?.data?.length - 1 ? 0 : currentIndex + 1;
     goToSlide(newIndex);
+  };
+
+  const handlePageChange = (page) => {
+    dispatch(fetchTestimonials({ page, perPage: pagination?.per_page || 5 }));
+    setCurrentIndex(0); // reset ke awal slide
   };
 
   return (
@@ -67,96 +74,122 @@ const Testimonials = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-rose-500 mx-auto rounded-full"></div>
         </div>
 
+        {/* Loading / Error */}
+        {loading && (
+          <p className="text-center text-gray-500">Loading testimonials...</p>
+        )}
+        {error && (
+          <p className="text-center text-red-500">Error: {error.message}</p>
+        )}
+
         {/* Testimonials Carousel */}
-        <div className="relative max-w-4xl mx-auto">
-          {/* Main Testimonial Card */}
-          <div className="relative overflow-hidden">
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        {!loading && testimonials?.data?.length > 0 && (
+          <div className="relative max-w-4xl mx-auto">
+            <div className="relative overflow-hidden">
+              <div
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+              >
+                {testimonials?.data?.map((testimonial, index) => (
+                  <div key={index} className="w-full flex-shrink-0">
+                    <Card className="mx-4 border-0 shadow-2xl bg-white hover:shadow-3xl transition-shadow duration-300">
+                      <CardContent className="p-8 md:p-12 text-center">
+                        {/* Quote Icon */}
+                        <div className="mb-6">
+                          <Quote className="w-12 h-12 text-rose-300 mx-auto" />
+                        </div>
+
+                        {/* Testimonial Text */}
+                        <blockquote className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-8 font-light italic">
+                          "{testimonial?.ulasan}"
+                        </blockquote>
+
+                        {/* Customer Info */}
+                        <div className="flex items-center justify-center space-x-4">
+                          <div className="w-16 h-16 bg-gradient-to-r from-rose-400 to-rose-500 rounded-full flex items-center justify-center shadow-lg">
+                            <span className="text-white font-bold text-lg">
+                              {testimonial?.nama_lengkap?.split(" ")[0][0]}
+                              {testimonial?.nama_lengkap?.split(" ")[1]
+                                ? testimonial?.nama_lengkap?.split(" ")[1][0]
+                                : ""}
+                            </span>
+                          </div>
+
+                          <div className="text-left">
+                            <h4 className="font-serif font-bold text-gray-800 text-lg">
+                              {testimonial?.nama_lengkap}
+                            </h4>
+                            <Badge className="bg-gradient-to-r from-rose-400 to-rose-500 text-white mt-1">
+                              {testimonial?.event_type}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        {/* Star Rating */}
+                        <div className="flex justify-center space-x-1 mt-6">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className="w-5 h-5 fill-rose-400 text-rose-400"
+                            />
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Arrows */}
+            <button
+              onClick={goToPrevious}
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white shadow-lg hover:shadow-xl rounded-full p-3 text-gray-600 hover:text-rose-500 transition-all duration-200 hover:scale-110"
             >
-              {testimonials?.data?.map((testimonial, index) => (
-                <div key={index} className="w-full flex-shrink-0">
-                  <Card className="mx-4 border-0 shadow-2xl bg-white hover:shadow-3xl transition-shadow duration-300">
-                    <CardContent className="p-8 md:p-12 text-center">
-                      {/* Quote Icon */}
-                      <div className="mb-6">
-                        <Quote className="w-12 h-12 text-rose-300 mx-auto" />
-                      </div>
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              onClick={goToNext}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white shadow-lg hover:shadow-xl rounded-full p-3 text-gray-600 hover:text-rose-500 transition-all duration-200 hover:scale-110"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
 
-                      {/* Testimonial Text */}
-                      <blockquote className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-8 font-light italic">
-                        "{testimonial.text}"
-                      </blockquote>
-
-                      {/* Customer Info */}
-                      <div className="flex items-center justify-center space-x-4">
-                        {/* Avatar */}
-                        <div className="w-16 h-16 bg-gradient-to-r from-rose-400 to-rose-500 rounded-full flex items-center justify-center shadow-lg">
-                          <span className="text-white font-bold text-lg">
-                            {testimonial.name.split(" ")[0][0]}
-                            {testimonial.name.split(" ")[1]
-                              ? testimonial.name.split(" ")[1][0]
-                              : ""}
-                          </span>
-                        </div>
-
-                        <div className="text-left">
-                          <h4 className="font-serif font-bold text-gray-800 text-lg">
-                            {testimonial.name}
-                          </h4>
-                          <Badge className="bg-gradient-to-r from-rose-400 to-rose-500 text-white mt-1">
-                            {testimonial.eventType}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      {/* Star Rating */}
-                      <div className="flex justify-center space-x-1 mt-6">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className="w-5 h-5 fill-rose-400 text-rose-400"
-                          />
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+            {/* Dots Indicator */}
+            <div className="flex justify-center space-x-2 mt-8">
+              {testimonials?.data?.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                    index === currentIndex
+                      ? "bg-gradient-to-r from-rose-400 to-rose-500 w-8"
+                      : "bg-gray-300 hover:bg-gray-400"
+                  }`}
+                />
               ))}
             </div>
+
+            {/* Pagination Controls */}
+            {pagination && (
+              <div className="flex justify-center mt-6 space-x-2">
+                {Array.from({ length: pagination.total_pages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handlePageChange(i + 1)}
+                    className={`px-3 py-1 rounded-full border ${
+                      pagination.current_page === i + 1
+                        ? "bg-rose-500 text-white border-rose-500"
+                        : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-
-          {/* Navigation Arrows */}
-          <button
-            onClick={goToPrevious}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white shadow-lg hover:shadow-xl rounded-full p-3 text-gray-600 hover:text-rose-500 transition-all duration-200 hover:scale-110"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-
-          <button
-            onClick={goToNext}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white shadow-lg hover:shadow-xl rounded-full p-3 text-gray-600 hover:text-rose-500 transition-all duration-200 hover:scale-110"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-
-          {/* Dots Indicator */}
-          <div className="flex justify-center space-x-2 mt-8">
-            {testimonials?.data?.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                  index === currentIndex
-                    ? "bg-gradient-to-r from-rose-400 to-rose-500 w-8"
-                    : "bg-gray-300 hover:bg-gray-400"
-                }`}
-              />
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* Stats Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 max-w-4xl mx-auto">

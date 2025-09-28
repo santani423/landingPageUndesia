@@ -4,6 +4,7 @@ import {
   getTestimonials,
   getThemes,
   getThemeVideos,
+  getThemeCategories,
 } from "../services/mockService";
 
 // Async thunk untuk fetch data
@@ -25,10 +26,21 @@ export const fetchThemes = createAsyncThunk("demo/getThemes", async () => {
   return data;
 });
 
-export const fetchThemeVideos = createAsyncThunk("demo/getThemeVideos", async () => {
-  const data = await getThemeVideos();
-  return data;
-});
+export const fetchThemeVideos = createAsyncThunk(
+  "demo/getThemeVideos",
+  async () => {
+    const data = await getThemeVideos();
+    return data;
+  }
+);
+
+export const fetchThemeCategories = createAsyncThunk(
+  "demo/getThemeCategories",
+  async () => {
+    const data = await getThemeCategories();
+    return data;
+  }
+);
 
 const mockSlice = createSlice({
   name: "mock",
@@ -38,6 +50,7 @@ const mockSlice = createSlice({
     testimonials: null,
     themes: null,
     themeVideos: [],
+    themeCategories: [],
     loading: false,
     error: null,
   },
@@ -92,6 +105,19 @@ const mockSlice = createSlice({
         state.themeVideos = action.payload;
       })
       .addCase(fetchThemeVideos.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      // getThemeCategories
+      .addCase(fetchThemeCategories.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchThemeCategories.fulfilled, (state, action) => {
+        state.loading = false;
+        state.themeCategories = action.payload;
+      })
+      .addCase(fetchThemeCategories.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

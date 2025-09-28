@@ -49,3 +49,17 @@ export const getThemeVideos = async (page = 1, perPage = 10) => {
     throw error.response || error;
   }
 };
+
+export const getThemeCategories = async (page = 1, perPage = 10) => {
+  try {
+    const response = await axios.get(`${API_URL}/categories`, {
+      params: {
+        page,
+        per_page: perPage,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};

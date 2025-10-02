@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
@@ -27,17 +27,20 @@ const LandingPage = () => {
     </div>
   );
 };
+const GalleryPage = () => {
+  return <Gallery />;
+};
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
+      <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/themes" element={<Gallery />} />
+          <Route path="/themes" element={<GalleryPage />} />
           {/* <Route path="/themes" element={<Themes />} /> */}
         </Routes>
-      </BrowserRouter>
+      </Router>
     </div>
   );
 }

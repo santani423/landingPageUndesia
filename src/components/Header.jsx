@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
 import { mockData } from "./mock";
 import { useDispatch, useSelector } from "react-redux";
 const Header = () => {
+  const navigate = useNavigate(); 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -30,7 +32,8 @@ const Header = () => {
       }
     } else {
       // Kalau href bukan anchor, pindah halaman
-      window.location.href = href;
+      navigate(href)
+      // window.location.href = href;
     }
 
     setIsMobileMenuOpen(false);

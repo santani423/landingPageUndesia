@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/api"; // ganti sesuai URL Laravel
-// const API_URL = "https://banksampah.undesia.com/api"; // ganti sesuai URL Laravel
+// const API_URL = "http://localhost:8000/api"; // ganti sesuai URL Laravel
+const API_URL = "https://bancendundesia.undesia.com/api"; // ganti sesuai URL Laravel
 
 export const getDemos = async () => {
   try {

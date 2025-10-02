@@ -44,8 +44,19 @@ const Gallery = () => {
 
   const handleBackToHome = () => window.history.back();
 
-  const handleOrderClick = (theme) =>
-    window.open(`${baseUrl}order/${theme?.kode_theme}`, "_blank");
+  const handleOrderClick = (type, theme) => {
+    if (type === "website") {
+      window.open(`${baseUrl}order/${theme?.kode_theme}`, "_blank");
+    } else {
+      const phone = "6285778674418"; // ganti dengan nomor WA tujuan
+      const message = `Halo, saya tertarik dengan tema ${theme?.nama_theme} (${theme?.kode_theme}). Bisa dibantu?`;
+      const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(
+        message
+      )}`;
+
+      window.open(whatsappUrl, "_blank");
+    }
+  };
 
   const filterItems = (items) => {
     if (selectedCategory === "all") return items;
@@ -195,7 +206,7 @@ const Gallery = () => {
                     </Button>
 
                     <Button
-                      onClick={() => handleOrderClick(demo)}
+                      onClick={() => handleOrderClick("website", demo)}
                       className="w-full bg-gradient-to-r from-green-500 to-emerald-400 hover:from-green-600 hover:to-emerald-500 text-white rounded-full"
                     >
                       Pesan Sekarang
@@ -255,12 +266,20 @@ const Gallery = () => {
                         ? `Rp ${demo.harga.toLocaleString()}`
                         : "Tanpa harga"}
                     </p>
-                    <Button
-                      onClick={() => handleDemoClick("video", demo)}
-                      className="w-full bg-gradient-to-r from-orange-500 to-red-400 hover:from-orange-600 hover:to-red-500 text-white rounded-full"
-                    >
-                      Play Video Demo
-                    </Button>
+                    <div className="flex flex-col space-y-3">
+                      <Button
+                        onClick={() => handleDemoClick("video", demo)}
+                        className="w-full bg-gradient-to-r from-orange-500 to-red-400 hover:from-orange-600 hover:to-red-500 text-white rounded-full"
+                      >
+                        Play Video Demo
+                      </Button>
+                      <Button
+                        onClick={() => handleOrderClick("video", demo)}
+                        className="w-full bg-gradient-to-r from-green-500 to-emerald-400 hover:from-green-600 hover:to-emerald-500 text-white rounded-full"
+                      >
+                        Pesan Sekarang
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))}

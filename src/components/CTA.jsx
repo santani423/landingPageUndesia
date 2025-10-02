@@ -5,19 +5,20 @@ import { ArrowRight, Sparkles, Heart } from 'lucide-react';
 const CTA = () => {
   const handleCTAClick = (action) => {
     console.log(`CTA clicked: ${action}`);
-    switch (action) {
-      case 'website':
-        alert('Akan mengarahkan ke form pemesanan undangan website...');
-        break;
-      case 'video':
-        alert('Akan mengarahkan ke form pemesanan video undangan...');
-        break;
-      case 'demo':
-        document.querySelector('#demo')?.scrollIntoView({ behavior: 'smooth' });
-        break;
-      default:
-        alert('Terima kasih atas minat Anda!');
-    }
+    window.location.href = "/themes";
+    // switch (action) {
+    //   case 'website':
+    //     alert('Akan mengarahkan ke form pemesanan undangan website...');
+    //     break;
+    //   case 'video':
+    //     alert('Akan mengarahkan ke form pemesanan video undangan...');
+    //     break;
+    //   case 'demo':
+    //     document.querySelector('#demo')?.scrollIntoView({ behavior: 'smooth' });
+    //     break;
+    //   default:
+    //     alert('Terima kasih atas minat Anda!');
+    // }
   };
 
   return (

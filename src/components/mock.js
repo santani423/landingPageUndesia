@@ -80,7 +80,7 @@ export const mockData = {
   packages: [
     {
       name: 'Paket Ramah',
-      price: 'Rp80K',
+      price: 'Rp99K',
       description: 'Simple, cepat, hemat',
       features: [
         'Desain template pilihan',
@@ -96,7 +96,7 @@ export const mockData = {
     },
     {
       name: 'Paket Favorit',
-      price: 'Rp99K',
+      price: 'Rp149K',
       description: 'Paling lengkap & terjangkau',
       features: [
         'Semua fitur Paket Ramah',

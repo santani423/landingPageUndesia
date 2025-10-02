@@ -8,7 +8,8 @@ const Footer = () => {
     console.log(`Contact clicked: ${type} - ${value}`);
     switch (type) {
       case 'whatsapp':
-        window.open(`https://wa.me/${value.replace(/[^0-9]/g, '')}`, '_blank');
+           const phone = "6285778674418"; // ganti dengan nomor WA tujuan
+        window.open(`https://wa.me/${phone}`, '_blank');
         break;
       case 'instagram':
         window.open(`https://instagram.com/${value.replace('@', '')}`, '_blank');

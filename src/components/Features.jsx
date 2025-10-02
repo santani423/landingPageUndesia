@@ -1,10 +1,16 @@
-import React from 'react';
-import { Badge } from './ui/badge';
-import { Card, CardContent } from './ui/card';
-import * as Icons from 'lucide-react';
-import { mockData } from './mock';
+import React from "react";
+import { Badge } from "./ui/badge";
+import { Card, CardContent } from "./ui/card";
+import * as Icons from "lucide-react";
+import { mockData } from "./mock";
+import { useNavigate } from "react-router-dom";
 
 const Features = () => {
+  const navigate = useNavigate();
+
+  const handleViewAllClick = () => {
+    navigate("/themes");
+  };
   return (
     <section id="features" className="py-20 bg-white">
       <div className="container mx-auto px-4">
@@ -23,10 +29,10 @@ const Features = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {mockData.features.map((feature, index) => {
             const IconComponent = Icons[feature.icon] || Icons.Star;
-            
+
             return (
-              <Card 
-                key={index} 
+              <Card
+                key={index}
                 className="group hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-0 shadow-lg bg-gradient-to-br from-white to-rose-50/30"
               >
                 <CardContent className="p-6 text-center h-full flex flex-col justify-between">
@@ -67,10 +73,16 @@ const Features = () => {
             Semua fitur ini tersedia dalam satu platform yang mudah digunakan
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white px-8 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200">
+            <button
+              onClick={handleViewAllClick}
+              className="bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white px-8 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+            >
               Lihat Semua Fitur
             </button>
-            <button className="border-2 border-rose-400 text-rose-600 hover:bg-rose-50 bg-white px-8 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200">
+            <button
+              onClick={handleViewAllClick}
+              className="border-2 border-rose-400 text-rose-600 hover:bg-rose-50 bg-white px-8 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+            >
               Coba Gratis
             </button>
           </div>

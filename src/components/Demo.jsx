@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -10,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchDemos, fetchThemes, fetchThemeVideos } from "../store/mockSlice";
 
 const Demo = () => {
+  const navigate = useNavigate(); 
   const [activeTab, setActiveTab] = useState("website");
   const [videoUrl, setVideoUrl] = useState("");
   const [isVideoOpen, setIsVideoOpen] = useState(false);
@@ -25,7 +27,7 @@ const Demo = () => {
   }, [dispatch]);
 
   const handleDemoClick = (type, theme) => {
-    console.log("Demo clicked:", type, theme?.url_video);
+    // console.log("Demo clicked:", type, theme?.url_video);
 
     if (type === "video") {
       setVideoUrl(theme?.url_video);
@@ -36,18 +38,26 @@ const Demo = () => {
     }
   };
 
-  const handleOrderClick = (theme) => {
-    window.open(`${baseUrl}order/${theme?.kode_theme}`, "_blank");
+  const handleOrderClick = (type, theme) => {
+    if (type === "website") {
+      window.open(`${baseUrl}order/${theme?.kode_theme}`, "_blank");
+    } else {
+      const phone = "6285778674418"; // ganti dengan nomor WA tujuan
+      const message = `Halo, saya tertarik dengan tema ${theme?.nama_theme} (${theme?.kode_theme}). Bisa dibantu?`;
+      const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(
+        message
+      )}`;
+
+      window.open(whatsappUrl, "_blank");
+    }
   };
 
   const handleViewClick = (themeName) => {
     window.open(`${baseUrl}demo/${themeName}`, "_blank");
   };
 
-  const handleViewAllClick = () => {
-    alert(
-      "Akan mengarahkan ke halaman Gallery dengan semua contoh undangan..."
-    );
+  const handleViewAllClick = () => { 
+    navigate("/themes")
   };
 
   return (
@@ -109,7 +119,7 @@ const Demo = () => {
 
                     {/* Category */}
                     <Badge className="absolute top-3 right-3 bg-gradient-to-r from-rose-500 to-rose-400 text-white shadow-lg">
-                      {demo?.category_id}
+                      {demo?.category?.name}
                     </Badge>
 
                     {/* Hover overlay */}
@@ -140,7 +150,7 @@ const Demo = () => {
                     </Button>
 
                     <Button
-                      onClick={() => handleOrderClick(demo)}
+                      onClick={() => handleOrderClick("website", demo)}
                       className="w-full bg-gradient-to-r from-green-500 to-emerald-400 hover:from-green-600 hover:to-emerald-500 text-white rounded-full"
                     >
                       Pesan Sekarang
@@ -180,7 +190,7 @@ const Demo = () => {
                     </div>
 
                     <Badge className="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-red-400 text-white shadow-lg">
-                      {demo?.category_id}
+                      {demo?.category?.name}
                     </Badge>
 
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -203,12 +213,20 @@ const Demo = () => {
                         ? `Rp ${demo.harga.toLocaleString()}`
                         : "Tanpa harga"}
                     </p>
-                    <Button
-                      onClick={() => handleDemoClick("video", demo)}
-                      className="w-full bg-gradient-to-r from-orange-500 to-red-400 hover:from-orange-600 hover:to-red-500 text-white rounded-full"
-                    >
-                      Play Video Demo
-                    </Button>
+                    <div className="flex flex-col space-y-3">
+                      <Button
+                        onClick={() => handleDemoClick("video", demo)}
+                        className="w-full bg-gradient-to-r from-orange-500 to-red-400 hover:from-orange-600 hover:to-red-500 text-white rounded-full"
+                      >
+                        Play Video Demo
+                      </Button>
+                      <Button
+                        onClick={() => handleOrderClick("video", demo)}
+                        className="w-full bg-gradient-to-r from-green-500 to-emerald-400 hover:from-green-600 hover:to-emerald-500 text-white rounded-full"
+                      >
+                        Pesan Sekarang
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))}

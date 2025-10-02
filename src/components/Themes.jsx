@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Play, Eye, ArrowLeft, Filter } from 'lucide-react';
+import { Play, Eye, ArrowLeft, Filter,Phone } from 'lucide-react';
 import { mockData } from './mock';
 
 const Themes = () => {
@@ -61,7 +61,7 @@ const Themes = () => {
               </span>
             </div>
 
-            <Button className="bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white">
+            <Button onClick={()=>{window.open(`https://wa.me/${phone}`, '_blank');}} className="bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white">
               Pesan Sekarang
             </Button>
           </div>
